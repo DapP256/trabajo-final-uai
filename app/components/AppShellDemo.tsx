@@ -274,6 +274,15 @@ export function AppShell({ children }: PropsWithChildren) {
                     return <div>DatosEmpresa (componente no disponible)</div>;
                   }
                 })()
+              ) : pathname === '/AgregarAvisoEmpresa' ? (
+                (() => {
+                  try {
+                    const Comp = require('../components/AgregarAvisoEmpresa').default;
+                    return <Comp />;
+                  } catch (e) {
+                    return <div>AgregarAvisoEmpresa (componente no disponible)</div>;
+                  }
+                })()
               ) : (
                 children
               )}

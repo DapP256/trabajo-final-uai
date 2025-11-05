@@ -38,7 +38,7 @@ function Header({ open, onToggleSidebar }: { open: boolean; onToggleSidebar: () 
   );
 }
 
-function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
+function Sidebar({ open, onClose, navigate }: { open: boolean; onClose: () => void; navigate: (p: string) => void }) {
   const items = [
     { label: "Dashboard empleado", key: "emp.dashboard" },
     { label: "Datos personales (E)", key: "emp.datosE" },

@@ -7,7 +7,7 @@ export default function ReclamosEmpresaPage() {
   let ReclamosComp: React.ComponentType<any> | null = null;
   try {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    ReclamosComp = require("../../app/components/ReclamosEmpleado").default;
+    ReclamosComp = require("../components/ReclamosEmpleado").default;
   } catch (_) {
     ReclamosComp = null;
   }

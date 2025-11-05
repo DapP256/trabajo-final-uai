@@ -27,7 +27,10 @@ export default function LoginPage() {
     const matched = TEST_USERS.find((u) => u.email === email && u.pass === pass);
     if (matched) {
       if (remember && typeof window !== "undefined") {
-        try { localStorage.setItem("manito_user", JSON.stringify({ email })); } catch (_) {}
+        try {
+          const payload = matched.email === "a@a.com" ? { email: matched.email, empleado: true } : { email: matched.email };
+          localStorage.setItem("manito_user", JSON.stringify(payload));
+        } catch (_) {}
       }
       if (matched.email === "b@b.com") {
         try {

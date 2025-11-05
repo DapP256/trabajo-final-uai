@@ -217,6 +217,15 @@ export function AppShell({ children }: PropsWithChildren) {
                     return <div>DashboardEmpleado (componente no disponible)</div>;
                   }
                 })()
+              ) : route === '/DatosEmpleado' ? (
+                (() => {
+                  try {
+                    const Comp = require('../components/DatosPersonalesEmpleado').default;
+                    return <Comp />;
+                  } catch (e) {
+                    return <div>DatosEmpleado (componente no disponible)</div>;
+                  }
+                })()
               ) : (
                 children
               )}

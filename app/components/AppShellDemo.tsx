@@ -45,6 +45,7 @@ function Sidebar({ open, onClose, navigate, onLogout }: { open: boolean; onClose
     { label: "Datos personales (E)", key: "emp.datosE" },
     { label: "Documentacion (E)", key: "emp.docsE" },
     { label: "Postular Aviso (E)", key: "emp.postularE" },
+    { label: "Reclamos (E)", key: "emp.reclamosE" },
     { label: "Dashboard Empresa", key: "empr.dashboard" },
     { label: "Datos personales (EM)", key: "empr.datosEM" },
     { label: "Documentacion (EM)", key: "empr.docsEM" },
@@ -85,6 +86,8 @@ function Sidebar({ open, onClose, navigate, onLogout }: { open: boolean; onClose
                   navigate('/DocumentacionEmpleado');
                 } else if (item.key === 'emp.postularE') {
                   navigate('/PostularAvisoEmpleado');
+                } else if (item.key === 'emp.reclamosE') {
+                  navigate('/ReclamosEmpleado');
                 } else if (item.key === 'empr.dashboard') {
                   navigate('/DashboardEmpresa');
                 } else if (item.key === 'empr.datosEM') {
@@ -171,12 +174,13 @@ export function AppShell({ children }: PropsWithChildren) {
       if (nav) {
         console.assert(!nav.className.includes('\\'), 'TC17: nav sin backslashes');
         const buttons = Array.from(nav.querySelectorAll('button')) as HTMLButtonElement[];
-        console.assert(buttons.length === 10, `TC18: hay 10 items en sidebar, actual=${buttons.length}`);
+        console.assert(buttons.length === 11, `TC18: hay 11 items en sidebar, actual=${buttons.length}`);
         const expectedOrder = [
           'Dashboard empleado',
           'Datos personales (E)',
           'Documentacion (E)',
           'Postular Aviso (E)',
+          'Reclamos (E)',
           'Dashboard Empresa',
           'Datos personales (EM)',
           'Documentacion (EM)',

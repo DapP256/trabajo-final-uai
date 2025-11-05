@@ -217,7 +217,7 @@ export function AppShell({ children }: PropsWithChildren) {
 
           <main className="flex-1 px-2 py-2 md:px-4 md:py-4">
             <div data-testid="page-container" className="min-h-[calc(100vh-5.5rem)] w-full bg-white p-4 md:p-6 rounded-lg shadow-sm">
-              {route === '/DashboardEmpleado' ? (
+              {pathname === '/DashboardEmpleado' ? (
                 // lazy require to avoid import cycles
                 (() => {
                   try {
@@ -227,7 +227,7 @@ export function AppShell({ children }: PropsWithChildren) {
                     return <div>DashboardEmpleado (componente no disponible)</div>;
                   }
                 })()
-              ) : route === '/DatosEmpleado' ? (
+              ) : pathname === '/DatosEmpleado' ? (
                 (() => {
                   try {
                     const Comp = require('../components/DatosPersonalesEmpleado').default;
@@ -236,7 +236,7 @@ export function AppShell({ children }: PropsWithChildren) {
                     return <div>DatosEmpleado (componente no disponible)</div>;
                   }
                 })()
-              ) : route === '/DocumentacionEmpleado' ? (
+              ) : pathname === '/DocumentacionEmpleado' ? (
                 (() => {
                   try {
                     const Comp = require('../components/DocumentacionEmpleado').default;
@@ -245,7 +245,7 @@ export function AppShell({ children }: PropsWithChildren) {
                     return <div>DocumentacionEmpleado (componente no disponible)</div>;
                   }
                 })()
-              ) : route === '/PostularAvisoEmpleado' ? (
+              ) : pathname === '/PostularAvisoEmpleado' ? (
                 (() => {
                   try {
                     const Comp = require('../components/EmpleadoPostulacion').default;
@@ -254,7 +254,7 @@ export function AppShell({ children }: PropsWithChildren) {
                     return <div>PostularAvisoEmpleado (componente no disponible)</div>;
                   }
                 })()
-              ) : route === '/DashboardEmpresa' ? (
+              ) : pathname === '/DashboardEmpresa' ? (
                 (() => {
                   try {
                     const Comp = require('../components/DashboardEmpresa').default;
@@ -263,7 +263,7 @@ export function AppShell({ children }: PropsWithChildren) {
                     return <div>DashboardEmpresa (componente no disponible)</div>;
                   }
                 })()
-              ) : route === '/DatosEmpresa' ? (
+              ) : pathname === '/DatosEmpresa' ? (
                 (() => {
                   try {
                     const Comp = require('../components/DatosPersonalesEmpresa').default;

@@ -91,6 +91,8 @@ function Sidebar({ open, onClose, navigate }: { open: boolean; onClose: () => vo
                   navigate('/DatosEmpresa');
                 } else if (item.key === 'empr.docsEM') {
                   navigate('/DocumentacionEmpresa');
+                } else if (item.key === 'empr.solicitudEM') {
+                  navigate('/AgregarAvisoEmpresa');
                 }
                 onClose();
               }}

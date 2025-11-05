@@ -41,6 +41,7 @@ function Header({ open, onToggleSidebar }: { open: boolean; onToggleSidebar: () 
 
 function Sidebar({ open, onClose, navigate, onLogout }: { open: boolean; onClose: () => void; navigate: (p: string) => void; onLogout: () => void }) {
   const [isEmpleado, setIsEmpleado] = useState(false);
+  const [isEmpresa, setIsEmpresa] = useState(false);
 
   useEffect(() => {
     try {
@@ -49,6 +50,7 @@ function Sidebar({ open, onClose, navigate, onLogout }: { open: boolean; onClose
       if (!raw) return;
       const parsed = JSON.parse(raw);
       setIsEmpleado(Boolean(parsed && parsed.empleado === true));
+      setIsEmpresa(Boolean(parsed && parsed.empresa === true));
     } catch (_) {
       // ignore
     }
@@ -77,6 +79,24 @@ function Sidebar({ open, onClose, navigate, onLogout }: { open: boolean; onClose
     'empr.pagosEM',
     'empr.reclamosEM',
   ]);
+
+  const hiddenKeysForEmpresa = new Set([
+    'emp.dashboard',
+    'emp.datosE',
+    'emp.docsE',
+    'emp.postularE',
+    'emp.reclamosE',
+  ]);
+
+  const hiddenKeys = new Set();
+  if (isEmpleado) {
+    for (const k of hiddenKeysForEmpleado) hiddenKeys.add(k);
+  }
+  if (isEmpresa) {
+    for (const k of hiddenKeysForEmpresa) hiddenKeys.add(k);
+  }
+
+  const items = allItems.filter((it) => !hiddenKeys.has(it.key));
 
   const items = isEmpleado ? allItems.filter((it) => !hiddenKeysForEmpleado.has(it.key)) : allItems;
 

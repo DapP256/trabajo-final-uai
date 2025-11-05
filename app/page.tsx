@@ -17,9 +17,20 @@ export default function Page() {
     e.preventDefault();
     setSubmitted(true);
     if (!canSubmit) return;
-    // Placeholder demo submit
-    // In a real app replace with proper auth call
-    alert(`Iniciando sesión como ${email} (recordarme=${remember ? "sí" : "no"})`);
+
+    const TEST_EMAIL = "a@a.com";
+    const TEST_PASS = "123456";
+
+    if (email === TEST_EMAIL && pass === TEST_PASS) {
+      if (remember && typeof window !== "undefined") {
+        try { localStorage.setItem("manito_user", JSON.stringify({ email })); } catch (_) {}
+      }
+      alert(`Bienvenido — sesión iniciada como ${email}`);
+      if (typeof window !== "undefined") window.location.href = "/";
+      return;
+    }
+
+    alert("Credenciales inválidas. Probá con correo: a@a.com y contraseña: 123456");
   };
 
   return (

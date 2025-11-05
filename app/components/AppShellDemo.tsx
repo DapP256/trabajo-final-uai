@@ -95,6 +95,10 @@ function Sidebar({ open, onClose, navigate, onLogout }: { open: boolean; onClose
                   navigate('/AgregarAvisoEmpresa');
                 } else if (item.key === 'empr.pagosEM') {
                   navigate('/PagosEmpresa');
+                } else if (item.key === 'common.logout') {
+                  onClose();
+                  onLogout();
+                  return;
                 }
                 onClose();
               }}

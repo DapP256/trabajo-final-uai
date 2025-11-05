@@ -20,10 +20,10 @@ export default function LoginPage() {
     setSubmitted(true);
     if (!canSubmit) return;
 
-    const TEST_EMAIL = "a@a.com";
-    const TEST_PASS = "123456";
+    const TEST_USERS = [{ email: "a@a.com", pass: "123456" }, { email: "b@b.com", pass: "123456" }];
 
-    if (email === TEST_EMAIL && pass === TEST_PASS) {
+    const matched = TEST_USERS.find((u) => u.email === email && u.pass === pass);
+    if (matched) {
       if (remember && typeof window !== "undefined") {
         try { localStorage.setItem("manito_user", JSON.stringify({ email })); } catch (_) {}
       }

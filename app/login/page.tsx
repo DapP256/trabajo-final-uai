@@ -29,6 +29,14 @@ export default function LoginPage() {
       if (remember && typeof window !== "undefined") {
         try { localStorage.setItem("manito_user", JSON.stringify({ email })); } catch (_) {}
       }
+      if (matched.email === "b@b.com") {
+        try {
+          await router.replace("/admin");
+        } catch (_) {
+          if (typeof window !== "undefined") window.location.href = "/admin";
+        }
+        return;
+      }
       setLoggedIn(true);
       return;
     }

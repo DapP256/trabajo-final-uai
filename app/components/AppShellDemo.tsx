@@ -51,6 +51,7 @@ function Sidebar({ open, onClose, navigate, onLogout }: { open: boolean; onClose
     { label: "Documentacion (EM)", key: "empr.docsEM" },
     { label: "Solicitud Empleado (EM)", key: "empr.solicitudEM" },
     { label: "Datos Pago (EM)", key: "empr.pagosEM" },
+    { label: "Reclamos (EM)", key: "empr.reclamosEM" },
     { label: "Cerrar Sesion", key: "common.logout" },
   ];
 
@@ -98,6 +99,8 @@ function Sidebar({ open, onClose, navigate, onLogout }: { open: boolean; onClose
                   navigate('/AgregarAvisoEmpresa');
                 } else if (item.key === 'empr.pagosEM') {
                   navigate('/PagosEmpresa');
+                } else if (item.key === 'empr.reclamosEM') {
+                  navigate('/ReclamosEmpresa');
                 } else if (item.key === 'common.logout') {
                   onClose();
                   onLogout();
@@ -174,7 +177,7 @@ export function AppShell({ children }: PropsWithChildren) {
       if (nav) {
         console.assert(!nav.className.includes('\\'), 'TC17: nav sin backslashes');
         const buttons = Array.from(nav.querySelectorAll('button')) as HTMLButtonElement[];
-        console.assert(buttons.length === 11, `TC18: hay 11 items en sidebar, actual=${buttons.length}`);
+        console.assert(buttons.length === 12, `TC18: hay 12 items en sidebar, actual=${buttons.length}`);
         const expectedOrder = [
           'Dashboard empleado',
           'Datos personales (E)',
@@ -186,6 +189,7 @@ export function AppShell({ children }: PropsWithChildren) {
           'Documentacion (EM)',
           'Solicitud Empleado (EM)',
           'Datos Pago (EM)',
+          'Reclamos (EM)',
           'Cerrar Sesion'
         ];
         const texts = buttons.map(b => b.textContent?.trim() || '');

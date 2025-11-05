@@ -40,7 +40,21 @@ function Header({ open, onToggleSidebar }: { open: boolean; onToggleSidebar: () 
 }
 
 function Sidebar({ open, onClose, navigate, onLogout }: { open: boolean; onClose: () => void; navigate: (p: string) => void; onLogout: () => void }) {
-  const items = [
+  const [isEmpleado, setIsEmpleado] = useState(false);
+
+  useEffect(() => {
+    try {
+      if (typeof window === 'undefined') return;
+      const raw = localStorage.getItem('manito_user');
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      setIsEmpleado(Boolean(parsed && parsed.empleado === true));
+    } catch (_) {
+      // ignore
+    }
+  }, []);
+
+  const allItems = [
     { label: "Dashboard empleado", key: "emp.dashboard" },
     { label: "Datos personales (E)", key: "emp.datosE" },
     { label: "Documentacion (E)", key: "emp.docsE" },
@@ -54,6 +68,17 @@ function Sidebar({ open, onClose, navigate, onLogout }: { open: boolean; onClose
     { label: "Reclamos (EM)", key: "empr.reclamosEM" },
     { label: "Cerrar Sesion", key: "common.logout" },
   ];
+
+  const hiddenKeysForEmpleado = new Set([
+    'empr.dashboard',
+    'empr.datosEM',
+    'empr.docsEM',
+    'empr.solicitudEM',
+    'empr.pagosEM',
+    'empr.reclamosEM',
+  ]);
+
+  const items = isEmpleado ? allItems.filter((it) => !hiddenKeysForEmpleado.has(it.key)) : allItems;
 
   return (
     <>

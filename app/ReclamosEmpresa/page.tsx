@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { AppShell } from "../../app/components/AppShellDemo";
+import { AppShell } from "../components/AppShellDemo";
 
 export default function ReclamosEmpresaPage() {
   let ReclamosComp: React.ComponentType<any> | null = null;

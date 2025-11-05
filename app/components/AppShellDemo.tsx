@@ -296,6 +296,15 @@ export function AppShell({ children }: PropsWithChildren) {
                     return <div>AgregarAvisoEmpresa (componente no disponible)</div>;
                   }
                 })()
+              ) : pathname === '/PagosEmpresa' ? (
+                (() => {
+                  try {
+                    const Comp = require('../components/DatosParaRecibirPagos').default;
+                    return <Comp />;
+                  } catch (e) {
+                    return <div>PagosEmpresa (componente no disponible)</div>;
+                  }
+                })()
               ) : (
                 children
               )}

@@ -311,7 +311,7 @@ ${JSON.stringify(payload, null, 2)}`
               </button>
 
               <p className="text-center text-xs text-slate-500">
-                ¿Ya tenés cuenta? <a className="text-emerald-700 hover:underline" href="/">Iniciar sesión</a>
+                ¿Ya tenés cuenta? <a className="text-emerald-700 hover:underline" href="/login">Iniciar sesión</a>
               </p>
             </form>
           </div>

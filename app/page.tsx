@@ -17,7 +17,7 @@ export default function Page() {
   const passOk = useMemo(() => pass.length >= 6, [pass]);
   const canSubmit = emailOk && passOk;
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
     if (!canSubmit) return;
@@ -143,7 +143,7 @@ export default function Page() {
               </div>
 
               <p className="mt-1 text-center text-xs text-slate-400">
-                Al continuar, aceptás los <a className="text-emerald-700 underline" href="#">Términos y Condiciones</a> y la <a className="text-emerald-700 underline" href="#">Política de Privacidad</a>.
+                Al continuar, aceptás los <a className="text-emerald-700 underline" href="#">Términos y Condiciones</a> y la <a className="text-emerald-700 underline" href="#">Pol��tica de Privacidad</a>.
               </p>
             </form>
           </div>

@@ -22,7 +22,7 @@ export default function Page() {
     setSubmitted(true);
     if (!canSubmit) return;
 
-    const TEST_USERS = [{ email: "a@a.com", pass: "123456" }, { email: "b@b.com", pass: "123456" }, { email: "c@c.com", pass: "12346" }];
+    const TEST_USERS = [{ email: "a@a.com", pass: "123456" }, { email: "b@b.com", pass: "123456" }, { email: "c@c.com", pass: "123456" }];
 
     const matched = TEST_USERS.find((u) => u.email === email && u.pass === pass);
     if (matched) {
@@ -108,7 +108,7 @@ export default function Page() {
                     type={showPass ? "text" : "password"}
                     value={pass}
                     onChange={(e) => setPass(e.target.value)}
-                    placeholder="••••••••"
+                    placeholder="���•••••••"
                     className="input-field w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 pr-10 outline-none focus:border-emerald-400 focus:bg-white"
                   />
                   <button

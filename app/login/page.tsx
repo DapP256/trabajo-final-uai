@@ -22,7 +22,7 @@ export default function LoginPage() {
     setSubmitted(true);
     if (!canSubmit) return;
 
-    const TEST_USERS = [{ email: "a@a.com", pass: "123456" }, { email: "b@b.com", pass: "123456" }, { email: "c@c.com", pass: "12346" }];
+    const TEST_USERS = [{ email: "a@a.com", pass: "123456" }, { email: "b@b.com", pass: "123456" }, { email: "c@c.com", pass: "123456" }];
 
     const matched = TEST_USERS.find((u) => u.email === email && u.pass === pass);
     if (matched) {

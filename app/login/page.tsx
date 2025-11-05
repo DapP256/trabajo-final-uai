@@ -17,7 +17,7 @@ export default function LoginPage() {
   const passOk = useMemo(() => pass.length >= 6, [pass]);
   const canSubmit = emailOk && passOk;
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
     if (!canSubmit) return;

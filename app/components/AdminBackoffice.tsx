@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 
 type Usuario = {
   id: number;
@@ -72,6 +73,7 @@ type ModalState =
   | null;
 
 export default function AdminBackoffice() {
+  const router = useRouter();
   const hoyISO = new Date().toISOString().slice(0, 10);
 
   const usuariosInit = useMemo<Usuario[]>(
@@ -189,6 +191,22 @@ export default function AdminBackoffice() {
     showToast("Administrador creado", nuevo.email);
   };
 
+  const handleLogout = useCallback(() => {
+    try {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("manito_user");
+        sessionStorage.removeItem("manito_session");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+    try {
+      router.replace("/login");
+    } catch (error) {
+      if (typeof window !== "undefined") window.location.href = "/login";
+    }
+  }, [router]);
+
   const editAdmin = (id: number, patch: Partial<Admin>) => {
     setAdmins((prev) => prev.map((a) => (a.id === id ? { ...a, ...patch } : a)));
     showToast("Administrador actualizado", `ID ${id}`);
@@ -229,11 +247,18 @@ export default function AdminBackoffice() {
                 ["pagos", "Pagos"],
                 ["administradores", "Administradores"],
                 ["ajustes", "Ajustes"],
+                ["logout", "Cerrar sesión"],
               ] as const
             ).map(([key, label]) => (
               <button
                 key={key}
-                onClick={() => setTab(key)}
+                onClick={() => {
+                  if (key === "logout") {
+                    handleLogout();
+                    return;
+                  }
+                  setTab(key);
+                }}
                 className={`px-3 py-2 text-sm ${tab === key ? "bg-neutral-100" : "hover:bg-neutral-50"}`}
               >
                 {label}

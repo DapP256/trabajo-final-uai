@@ -24,7 +24,14 @@ export default function SeleccionColaboradoresSoloRol() {
 
   // ====== Derivados ======
   const filtered = rows
-    .filter((r:any) => (!fRol || r.rol === fRol))
+    .filter((r:any) => {
+      if (!fRol) return true;
+      try {
+        return String(r.rol).toLowerCase().includes(String(fRol).toLowerCase().trim());
+      } catch (_) {
+        return true;
+      }
+    })
     .sort((a:any,b:any)=> b.match - a.match); // fijo por match desc
 
   const checkedIds = Object.keys(checked).filter(k => checked[k]);
@@ -66,10 +73,13 @@ export default function SeleccionColaboradoresSoloRol() {
       {/* Toolbar: SOLO filtro por rol */}
       <div className="mx-auto max-w-7xl px-4 py-5">
         <div className="bg-white border rounded-2xl p-3 grid grid-cols-1 gap-3">
-          <select value={fRol} onChange={(e)=>setFRol(e.target.value)} className="rounded-xl border px-3 py-2 text-sm">
-            <option value="">Buscar por rol…</option>
-            {uniq(base.map((b:any)=>b.rol)).map((r:any)=> <option key={r} value={r}>{r}</option>)}
-          </select>
+          <input
+            type="text"
+            value={fRol}
+            onChange={(e) => setFRol(e.target.value)}
+            placeholder="Buscar por rol…"
+            className="rounded-xl border px-3 py-2 text-sm"
+          />
         </div>
 
         {/* Acciones masivas */}

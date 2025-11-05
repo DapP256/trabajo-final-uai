@@ -97,6 +97,9 @@ function Sidebar({ open, onClose, navigate, onLogout }: { open: boolean; onClose
     for (const k of hiddenKeysForEmpresa) hiddenKeys.add(k);
   }
 
+  // seleccionEM should only be visible for empresa users
+  if (!isEmpresa) hiddenKeys.add('empr.seleccionEM');
+
   const items = allItems.filter((it) => !hiddenKeys.has(it.key));
 
 

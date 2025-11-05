@@ -145,6 +145,8 @@ function Sidebar({ open, onClose, navigate, onLogout }: { open: boolean; onClose
                   navigate('/DocumentacionEmpresa');
                 } else if (item.key === 'empr.solicitudEM') {
                   navigate('/AgregarAvisoEmpresa');
+                } else if (item.key === 'empr.seleccionEM') {
+                  navigate('/SeleccionColaboladores');
                 } else if (item.key === 'empr.pagosEM') {
                   navigate('/PagosEmpresa');
                 } else if (item.key === 'empr.reclamosEM') {

@@ -75,9 +75,11 @@ function Sidebar({ open, onClose, navigate }: { open: boolean; onClose: () => vo
               key={item.key}
               className="flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50"
               onClick={() => {
-                // navigate to the empleado dashboard when clicked
+                // map specific keys to routes
                 if (item.key === 'emp.dashboard') {
                   navigate('/DashboardEmpleado');
+                } else if (item.key === 'emp.datosE') {
+                  navigate('/DatosEmpleado');
                 }
                 onClose();
               }}

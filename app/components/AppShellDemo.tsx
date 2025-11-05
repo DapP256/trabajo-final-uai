@@ -117,7 +117,8 @@ function Footer() {
 
 export function AppShell({ children }: PropsWithChildren) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [route, setRoute] = useState<string>(typeof window !== 'undefined' ? window.location.pathname : '/');
+  const router = useRouter();
+  const pathname = usePathname() || '/';
 
   useEffect(() => {
     try {
@@ -194,16 +195,16 @@ export function AppShell({ children }: PropsWithChildren) {
       // no-op
     }
 
-    const onPop = () => setRoute(window.location.pathname);
-    window.addEventListener('popstate', onPop);
-    return () => window.removeEventListener('popstate', onPop);
+    // keep effect for tests only; pathname is provided by next/navigation
   }, []);
 
   const navigate = (p: string) => {
-    if (typeof window !== 'undefined') {
-      window.history.pushState({}, '', p);
+    try {
+      router.push(p);
+    } catch (_) {
+      // fallback to history if next/router unavailable
+      if (typeof window !== 'undefined') window.history.pushState({}, '', p);
     }
-    setRoute(p);
   };
 
   return (

@@ -2,9 +2,9 @@
 
 import React, { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import Demo from "./components/AppShellDemo";
+import Demo from "../components/AppShellDemo";
 
-export default function Page() {
+export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
@@ -143,7 +143,7 @@ export default function Page() {
               </div>
 
               <p className="mt-1 text-center text-xs text-slate-400">
-                Al continuar, aceptás los <a className="text-emerald-700 underline" href="#">Términos y Condiciones</a> y la <a className="text-emerald-700 underline" href="#">Pol��tica de Privacidad</a>.
+                Al continuar, aceptás los <a className="text-emerald-700 underline" href="#">Términos y Condiciones</a> y la <a className="text-emerald-700 underline" href="#">Política de Privacidad</a>.
               </p>
             </form>
           </div>

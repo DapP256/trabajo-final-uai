@@ -188,17 +188,36 @@ export function AppShell({ children }: PropsWithChildren) {
     return () => window.removeEventListener('popstate', onPop);
   }, []);
 
+  const navigate = (p: string) => {
+    if (typeof window !== 'undefined') {
+      window.history.pushState({}, '', p);
+    }
+    setRoute(p);
+  };
+
   return (
     <>
       <div className="flex min-h-screen w-full bg-slate-50">
-        <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} navigate={navigate} />
 
         <div data-testid="right-col" className={`pt-14 flex min-h-screen flex-1 flex-col ${sidebarOpen ? "lg:ml-72" : "lg:ml-0"}`}>
           <Header open={sidebarOpen} onToggleSidebar={() => setSidebarOpen((v) => !v)} />
 
           <main className="flex-1 px-2 py-2 md:px-4 md:py-4">
             <div data-testid="page-container" className="min-h-[calc(100vh-5.5rem)] w-full bg-white p-4 md:p-6 rounded-lg shadow-sm">
-              {children}
+              {route === '/DashboardEmpleado' ? (
+                // lazy require to avoid import cycles
+                (() => {
+                  try {
+                    const Comp = require('../components/DashboardTrabajador').default;
+                    return <Comp />;
+                  } catch (e) {
+                    return <div>DashboardEmpleado (componente no disponible)</div>;
+                  }
+                })()
+              ) : (
+                children
+              )}
             </div>
           </main>
         </div>

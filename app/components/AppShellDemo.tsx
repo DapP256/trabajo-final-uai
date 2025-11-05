@@ -223,10 +223,25 @@ export function AppShell({ children }: PropsWithChildren) {
     }
   }, [router]);
 
+  const logout = useCallback(() => {
+    setSidebarOpen(false);
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.removeItem('manito_user');
+        sessionStorage.removeItem('manito_session');
+      } catch (_) {}
+    }
+    try {
+      router.replace('/login');
+    } catch (err) {
+      if (typeof window !== 'undefined') window.location.href = '/login';
+    }
+  }, [router]);
+
   return (
     <>
       <div className="flex min-h-screen w-full bg-slate-50">
-        <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} navigate={navigate} />
+        <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} navigate={navigate} onLogout={logout} />
 
         <div data-testid="right-col" className={`pt-14 flex min-h-screen flex-1 flex-col ${sidebarOpen ? "lg:ml-72" : "lg:ml-0"}`}>
           <Header open={sidebarOpen} onToggleSidebar={() => setSidebarOpen((v) => !v)} />

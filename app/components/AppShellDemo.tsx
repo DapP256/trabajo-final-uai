@@ -98,8 +98,9 @@ function Footer() {
   );
 }
 
-function AppShell({ children }: PropsWithChildren) {
+export function AppShell({ children }: PropsWithChildren) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [route, setRoute] = useState<string>(typeof window !== 'undefined' ? window.location.pathname : '/');
 
   useEffect(() => {
     try {
@@ -175,6 +176,10 @@ function AppShell({ children }: PropsWithChildren) {
     } catch (_) {
       // no-op
     }
+
+    const onPop = () => setRoute(window.location.pathname);
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
   }, []);
 
   return (

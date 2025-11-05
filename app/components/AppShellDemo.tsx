@@ -84,6 +84,8 @@ function Sidebar({ open, onClose, navigate }: { open: boolean; onClose: () => vo
                   navigate('/DocumentacionEmpleado');
                 } else if (item.key === 'emp.postularE') {
                   navigate('/PostularAvisoEmpleado');
+                } else if (item.key === 'empr.dashboard') {
+                  navigate('/DashboardEmpresa');
                 }
                 onClose();
               }}

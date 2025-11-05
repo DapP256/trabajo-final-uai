@@ -260,38 +260,7 @@ export function AppShell({ children }: PropsWithChildren) {
     // keep effect for tests only; pathname is provided by next/navigation
   }, []);
 
-  // Redirect empresa or empleado users to respective dashboard by default when AppShell mounts
-  useEffect(() => {
-    try {
-      if (typeof window === 'undefined') return;
-      const raw = localStorage.getItem('manito_user');
-      if (!raw) return;
-      const parsed = JSON.parse(raw);
-      if (parsed) {
-        if (parsed.empresa === true) {
-          if (pathname !== '/DashboardEmpresa') {
-            try {
-              router.replace('/DashboardEmpresa');
-            } catch (_) {
-              if (typeof window !== 'undefined') window.location.href = '/DashboardEmpresa';
-            }
-          }
-        } else if (parsed.empleado === true) {
-          if (pathname !== '/DashboardEmpleado') {
-            try {
-              router.replace('/DashboardEmpleado');
-            } catch (_) {
-              if (typeof window !== 'undefined') window.location.href = '/DashboardEmpleado';
-            }
-          }
-        }
-      }
-    } catch (_) {
-      // ignore
-    }
-  }, [pathname, router]);
-
-  const navigate = useCallback((p: string) => {
+    const navigate = useCallback((p: string) => {
     try {
       const nav = router.push(p);
       if (nav && typeof (nav as Promise<any>).catch === 'function') {

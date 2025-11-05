@@ -80,6 +80,8 @@ function Sidebar({ open, onClose, navigate }: { open: boolean; onClose: () => vo
                   navigate('/DashboardEmpleado');
                 } else if (item.key === 'emp.datosE') {
                   navigate('/DatosEmpleado');
+                } else if (item.key === 'emp.docsE') {
+                  navigate('/DocumentacionEmpleado');
                 }
                 onClose();
               }}

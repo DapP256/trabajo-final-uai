@@ -70,7 +70,7 @@ export default function LoginPage() {
               <div>
                 <div className="mb-1 flex items-center justify-between text-sm">
                   <label className="label text-slate-600">Contraseña</label>
-                  <a href="#" className="forgot-link text-emerald-700 hover:underline">¿Olvidaste tu contraseña?</a>
+                  <a href="/recupero" className="forgot-link text-emerald-700 hover:underline">¿Olvidaste tu contraseña?</a>
                 </div>
                 <div className="relative">
                   <input

@@ -208,23 +208,20 @@ export function AppShell({ children }: PropsWithChildren) {
     // keep effect for tests only; pathname is provided by next/navigation
   }, []);
 
-  const navigate = (p: string) => {
+  const navigate = useCallback((p: string) => {
     try {
       const nav = router.push(p);
       if (nav && typeof (nav as Promise<any>).catch === 'function') {
         (nav as Promise<any>).catch((err) => {
-          // ignore navigation AbortError which Next may throw when navigation is superseded
           if (err && (err.name === 'AbortError' || (err.message && err.message.toLowerCase().includes('aborted')))) return;
-          // log unexpected errors
           // eslint-disable-next-line no-console
           console.error('Navigation error:', err);
         });
       }
     } catch (e) {
-      // fallback to history if next/router unavailable
       if (typeof window !== 'undefined') window.history.pushState({}, '', p);
     }
-  };
+  }, [router]);
 
   return (
     <>

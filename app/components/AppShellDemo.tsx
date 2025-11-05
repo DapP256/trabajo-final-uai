@@ -239,6 +239,15 @@ export function AppShell({ children }: PropsWithChildren) {
                     return <div>DocumentacionEmpleado (componente no disponible)</div>;
                   }
                 })()
+              ) : route === '/PostularAvisoEmpleado' ? (
+                (() => {
+                  try {
+                    const Comp = require('../components/EmpleadoPostulacion').default;
+                    return <Comp />;
+                  } catch (e) {
+                    return <div>PostularAvisoEmpleado (componente no disponible)</div>;
+                  }
+                })()
               ) : (
                 children
               )}

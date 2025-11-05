@@ -250,6 +250,15 @@ export function AppShell({ children }: PropsWithChildren) {
                     return <div>PostularAvisoEmpleado (componente no disponible)</div>;
                   }
                 })()
+              ) : route === '/DashboardEmpresa' ? (
+                (() => {
+                  try {
+                    const Comp = require('../components/DashboardEmpresa').default;
+                    return <Comp />;
+                  } catch (e) {
+                    return <div>DashboardEmpresa (componente no disponible)</div>;
+                  }
+                })()
               ) : (
                 children
               )}

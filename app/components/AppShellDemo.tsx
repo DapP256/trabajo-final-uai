@@ -187,6 +187,21 @@ export function AppShell({ children }: PropsWithChildren) {
   const pathname = usePathname() || '/';
 
   useEffect(() => {
+    // attach a global handler to suppress unhandled promise rejections that are AbortError from Next navigation
+    const onUnhandled = (e:any) => {
+      try {
+        const reason = e?.reason || e?.detail || null;
+        if (!reason) return;
+        if (reason && (reason.name === 'AbortError' || (reason.message && String(reason.message).toLowerCase().includes('aborted')))) {
+          // prevent default logging of this unhelpful rejected navigation promise
+          if (e && typeof e.preventDefault === 'function') e.preventDefault();
+        }
+      } catch (_) {}
+    };
+    if (typeof window !== 'undefined') {
+      window.addEventListener('unhandledrejection', onUnhandled as EventListener);
+    }
+
     try {
       const headerEl = document.querySelector('[data-testid="app-header"]') as HTMLElement | null;
       console.assert(headerEl, "TC1: header renderizado");
@@ -264,6 +279,9 @@ export function AppShell({ children }: PropsWithChildren) {
     }
 
     // keep effect for tests only; pathname is provided by next/navigation
+    return () => {
+      if (typeof window !== 'undefined') window.removeEventListener('unhandledrejection', onUnhandled as EventListener);
+    };
   }, []);
 
     const navigate = useCallback((p: string) => {

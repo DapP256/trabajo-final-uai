@@ -66,6 +66,7 @@ function Sidebar({ open, onClose, navigate, onLogout }: { open: boolean; onClose
     { label: "Datos personales (EM)", key: "empr.datosEM" },
     { label: "Documentacion (EM)", key: "empr.docsEM" },
     { label: "Solicitud Empleado (EM)", key: "empr.solicitudEM" },
+    { label: "Seleccion de Colaboladores (EM)", key: "empr.seleccionEM" },
     { label: "Datos Pago (EM)", key: "empr.pagosEM" },
     { label: "Reclamos (EM)", key: "empr.reclamosEM" },
     { label: "Cerrar Sesion", key: "common.logout" },

@@ -122,7 +122,7 @@ export default function Page() {
 
               {/* Divider + link a registro */}
               <div className="my-2 text-center text-sm text-slate-500">
-                ¿No tenés cuenta? <a className="signup-link text-emerald-700 hover:underline" href="#">Crear cuenta</a>
+                ¿No tenés cuenta? <a className="signup-link text-emerald-700 hover:underline" href="/registro">Crear cuenta</a>
               </div>
 
               {/* Legal */}

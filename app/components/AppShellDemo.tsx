@@ -386,6 +386,15 @@ export function AppShell({ children }: PropsWithChildren) {
                     return <div>PagosEmpresa (componente no disponible)</div>;
                   }
                 })()
+              ) : pathname === '/ElegirColaboradorEmpresa' ? (
+                (() => {
+                  try {
+                    const Comp = require('../components/SeleccionColaboradoresSoloRol').default;
+                    return <Comp />;
+                  } catch (e) {
+                    return <div>ElegirColaboradorEmpresa (componente no disponible)</div>;
+                  }
+                })()
               ) : (
                 children
               )}

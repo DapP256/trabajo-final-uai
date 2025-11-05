@@ -74,7 +74,13 @@ function Sidebar({ open, onClose, navigate }: { open: boolean; onClose: () => vo
             <button
               key={item.key}
               className="flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50"
-              onClick={onClose}
+              onClick={() => {
+                // navigate to the empleado dashboard when clicked
+                if (item.key === 'emp.dashboard') {
+                  navigate('/DashboardEmpleado');
+                }
+                onClose();
+              }}
             >
               <span>{item.label}</span>
               <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">

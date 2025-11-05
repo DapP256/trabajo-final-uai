@@ -42,7 +42,26 @@ export default function Page() {
         }
         return;
       }
-      setLoggedIn(true);
+
+      // redirect to role-specific dashboard after login
+      try {
+        if (matched.email === "a@a.com") {
+          await router.replace("/DashboardEmpleado");
+        } else if (matched.email === "c@c.com") {
+          await router.replace("/DashboardEmpresa");
+        } else {
+          setLoggedIn(true);
+        }
+      } catch (_) {
+        if (matched.email === "a@a.com") {
+          if (typeof window !== "undefined") window.location.href = "/DashboardEmpleado";
+        } else if (matched.email === "c@c.com") {
+          if (typeof window !== "undefined") window.location.href = "/DashboardEmpresa";
+        } else {
+          setLoggedIn(true);
+        }
+      }
+
       return;
     }
 

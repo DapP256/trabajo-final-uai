@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
+import Demo from "./components/AppShellDemo";
 
 export default function Page() {
   const [email, setEmail] = useState("");
@@ -8,6 +9,7 @@ export default function Page() {
   const [showPass, setShowPass] = useState(false);
   const [remember, setRemember] = useState(true);
   const [submitted, setSubmitted] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
 
   const emailOk = useMemo(() => /.+@.+\..+/.test(email), [email]);
   const passOk = useMemo(() => pass.length >= 6, [pass]);
@@ -25,18 +27,18 @@ export default function Page() {
       if (remember && typeof window !== "undefined") {
         try { localStorage.setItem("manito_user", JSON.stringify({ email })); } catch (_) {}
       }
-      alert(`Bienvenido — sesión iniciada como ${email}`);
-      if (typeof window !== "undefined") window.location.href = "/";
+      setLoggedIn(true);
       return;
     }
 
     alert("Credenciales inválidas. Probá con correo: a@a.com y contraseña: 123456");
   };
 
+  if (loggedIn) return <Demo />;
+
   return (
     <div className="min-h-screen w-full bg-gradient-to-tr from-emerald-50 via-white to-white text-slate-800">
       <div className="mx-auto flex max-w-6xl gap-8 px-4 py-10 lg:py-14">
-        {/* Columna izquierda: branding + bullets */}
         <aside className="hidden w-1/2 flex-col justify-center lg:flex">
           <div className="mb-6 inline-flex items-center gap-3">
             <div className="brand-mark grid h-10 w-10 place-content-center rounded-lg bg-emerald-600 text-white font-bold">M</div>
@@ -64,11 +66,9 @@ export default function Page() {
           </div>
         </aside>
 
-        {/* Columna derecha: tarjeta de login */}
         <main className="mx-auto w-full lg:w-[460px]">
           <div className="login-card rounded-2xl border border-emerald-100 bg-white p-6 shadow-xl">
             <form onSubmit={onSubmit} className="space-y-4">
-              {/* Email */}
               <div>
                 <label className="label text-sm text-slate-600">Correo electrónico</label>
                 <input
@@ -83,7 +83,6 @@ export default function Page() {
                 )}
               </div>
 
-              {/* Password + forgot */}
               <div>
                 <div className="mb-1 flex items-center justify-between text-sm">
                   <label className="label text-slate-600">Contraseña</label>
@@ -111,7 +110,6 @@ export default function Page() {
                 )}
               </div>
 
-              {/* Remember me */}
               <label className="remember-row flex items-center gap-2 text-sm">
                 <input
                   type="checkbox"
@@ -122,7 +120,6 @@ export default function Page() {
                 Recordarme en este dispositivo
               </label>
 
-              {/* Submit */}
               <button
                 type="submit"
                 disabled={!canSubmit}
@@ -131,32 +128,19 @@ export default function Page() {
                 Iniciar sesión
               </button>
 
-              {/* Divider + link a registro */}
               <div className="my-2 text-center text-sm text-slate-500">
                 ¿No tenés cuenta? <a className="signup-link text-emerald-700 hover:underline" href="/registro">Crear cuenta</a>
               </div>
 
-              {/* Legal */}
               <p className="mt-1 text-center text-xs text-slate-400">
                 Al continuar, aceptás los <a className="text-emerald-700 underline" href="#">Términos y Condiciones</a> y la <a className="text-emerald-700 underline" href="#">Política de Privacidad</a>.
               </p>
             </form>
           </div>
 
-          {/* Footer mini */}
           <p className="mt-4 text-center text-[10px] text-slate-400">© {new Date().getFullYear()} Manito · CABA/AMBA</p>
         </main>
       </div>
     </div>
   );
-}
-
-// ==== Test cases rápidos (runtime, no rompen la UI) ====
-if (typeof window !== "undefined") {
-  try {
-    console.assert(/.+@.+\..+/.test("demo@demo.com"), "TC1: regex email básica OK");
-    console.assert(!/.+@.+\..+/.test("demo"), "TC2: regex email rechaza formato inválido");
-  } catch (_) {
-    // no-op
-  }
 }

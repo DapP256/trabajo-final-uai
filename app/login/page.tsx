@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
+import Demo from "../components/AppShellDemo";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -8,6 +9,7 @@ export default function LoginPage() {
   const [showPass, setShowPass] = useState(false);
   const [remember, setRemember] = useState(true);
   const [submitted, setSubmitted] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
 
   const emailOk = useMemo(() => /.+@.+\..+/.test(email), [email]);
   const passOk = useMemo(() => pass.length >= 6, [pass]);
@@ -25,13 +27,14 @@ export default function LoginPage() {
       if (remember && typeof window !== "undefined") {
         try { localStorage.setItem("manito_user", JSON.stringify({ email })); } catch (_) {}
       }
-      alert(`Bienvenido — sesión iniciada como ${email}`);
-      if (typeof window !== "undefined") window.location.href = "/";
+      setLoggedIn(true);
       return;
     }
 
     alert("Credenciales inválidas. Probá con correo: a@a.com y contraseña: 123456");
   };
+
+  if (loggedIn) return <Demo />;
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-tr from-emerald-50 via-white to-white text-slate-800">
@@ -140,14 +143,4 @@ export default function LoginPage() {
       </div>
     </div>
   );
-}
-
-// ==== Test cases rápidos (runtime, no rompen la UI) ====
-if (typeof window !== "undefined") {
-  try {
-    console.assert(/.+@.+\..+/.test("demo@demo.com"), "TC1: regex email básica OK");
-    console.assert(!/.+@.+\..+/.test("demo"), "TC2: regex email rechaza formato inválido");
-  } catch (_) {
-    // no-op
-  }
 }

@@ -22,13 +22,15 @@ export default function LoginPage() {
     setSubmitted(true);
     if (!canSubmit) return;
 
-    const TEST_USERS = [{ email: "a@a.com", pass: "123456" }, { email: "b@b.com", pass: "123456" }];
+    const TEST_USERS = [{ email: "a@a.com", pass: "123456" }, { email: "b@b.com", pass: "123456" }, { email: "c@c.com", pass: "12346" }];
 
     const matched = TEST_USERS.find((u) => u.email === email && u.pass === pass);
     if (matched) {
       if (remember && typeof window !== "undefined") {
         try {
-          const payload = matched.email === "a@a.com" ? { email: matched.email, empleado: true } : { email: matched.email };
+          const payload: any = { email: matched.email };
+          if (matched.email === "a@a.com") payload.empleado = true;
+          if (matched.email === "c@c.com") payload.empresa = true;
           localStorage.setItem("manito_user", JSON.stringify(payload));
         } catch (_) {}
       }

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, PropsWithChildren } from "react";
+import React, { useState, useEffect, PropsWithChildren, useCallback } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
 function Header({ open, onToggleSidebar }: { open: boolean; onToggleSidebar: () => void }) {

@@ -98,7 +98,6 @@ function Sidebar({ open, onClose, navigate, onLogout }: { open: boolean; onClose
 
   const items = allItems.filter((it) => !hiddenKeys.has(it.key));
 
-  const items = isEmpleado ? allItems.filter((it) => !hiddenKeysForEmpleado.has(it.key)) : allItems;
 
   return (
     <>

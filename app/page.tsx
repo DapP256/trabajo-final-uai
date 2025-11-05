@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Demo from "./components/AppShellDemo";
 
 export default function Page() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
   const [showPass, setShowPass] = useState(false);

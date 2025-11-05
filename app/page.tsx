@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import Demo from "./components/AppShellDemo";
 
 export default function Page() {

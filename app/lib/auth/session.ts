@@ -42,12 +42,12 @@ function verifyPayload(serialized: string, secret: string): SessionPayload | nul
 }
 
 function timingSafeEqual(a: string, b: string): boolean {
-  const aBuf = Buffer.from(a);
-  const bBuf = Buffer.from(b);
+  const aBuf = Buffer.from(a, 'utf8');
+  const bBuf = Buffer.from(b, 'utf8');
   if (aBuf.length !== bBuf.length) {
     return false;
   }
-  return createHmac('sha256', 'dummy').update(aBuf).digest('hex') === createHmac('sha256', 'dummy').update(bBuf).digest('hex');
+  return require('crypto').timingSafeEqual(aBuf, bBuf);
 }
 
 function cookieOptions() {

@@ -338,7 +338,8 @@ export function AppShell({ children }: PropsWithChildren) {
     setSidebarOpen(false);
     if (typeof window !== 'undefined') {
       try {
-        localStorage.removeItem('manito_user');
+        localStorage.removeItem(MANITO_USER_STORAGE_KEY);
+        sessionStorage.removeItem(MANITO_USER_STORAGE_KEY);
         sessionStorage.removeItem('manito_session');
       } catch (_) {}
       void fetch('/api/auth/logout', { method: 'POST' }).catch(() => undefined);

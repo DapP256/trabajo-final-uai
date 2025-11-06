@@ -45,3 +45,8 @@ export function requireServiceRoleKey(): string {
   }
   return SUPABASE_SERVICE_ROLE_KEY;
 }
+
+export function requireSessionSecret(): string {
+  const { SESSION_SECRET } = loadEnv();
+  return SESSION_SECRET;
+}

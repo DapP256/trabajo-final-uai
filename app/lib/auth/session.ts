@@ -47,7 +47,7 @@ function timingSafeEqual(a: string, b: string): boolean {
   if (aBuf.length !== bBuf.length) {
     return false;
   }
-  return require('crypto').timingSafeEqual(aBuf, bBuf);
+  return nodeTimingSafeEqual(aBuf, bBuf);
 }
 
 function cookieOptions() {

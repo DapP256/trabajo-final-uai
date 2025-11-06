@@ -26,11 +26,13 @@ export function loadEnv(): EnvShape {
 
   const NEXT_PUBLIC_SUPABASE_ANON_KEY = assertEnv(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY, "NEXT_PUBLIC_SUPABASE_ANON_KEY");
   const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const SESSION_SECRET = assertEnv(process.env.SESSION_SECRET, "SESSION_SECRET");
 
   cachedEnv = {
     NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY,
     SUPABASE_SERVICE_ROLE_KEY,
+    SESSION_SECRET,
   };
 
   return cachedEnv;

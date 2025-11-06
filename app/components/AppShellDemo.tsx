@@ -230,7 +230,7 @@ export function AppShell({ children }: PropsWithChildren) {
       } catch (_) {
         if (active) setSessionUser(null);
       } finally {
-        if (active) setSessionLoaded(true);
+        // no-op
       }
     };
     loadSession();

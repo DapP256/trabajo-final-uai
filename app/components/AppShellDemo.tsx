@@ -306,6 +306,7 @@ export function AppShell({ children }: PropsWithChildren) {
         localStorage.removeItem('manito_user');
         sessionStorage.removeItem('manito_session');
       } catch (_) {}
+      void fetch('/api/auth/logout', { method: 'POST' }).catch(() => undefined);
     }
     // router.replace returns a promise; attach catch to avoid unhandled rejections
     try {

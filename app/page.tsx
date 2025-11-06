@@ -22,12 +22,17 @@ export default function Page() {
     setSubmitted(true);
     if (!canSubmit) return;
 
-    const TEST_USERS = [{ email: "a@a.com", pass: "123456" }, { email: "b@b.com", pass: "123456" }];
+    const TEST_USERS = [{ email: "a@a.com", pass: "123456" }, { email: "b@b.com", pass: "123456" }, { email: "c@c.com", pass: "123456" }, { email: "d@d.com", pass: "123456" }];
 
     const matched = TEST_USERS.find((u) => u.email === email && u.pass === pass);
     if (matched) {
       if (remember && typeof window !== "undefined") {
-        try { localStorage.setItem("manito_user", JSON.stringify({ email })); } catch (_) {}
+        try {
+          const payload: any = { email: matched.email };
+          if (matched.email === "a@a.com") payload.empleado = true;
+          if (matched.email === "c@c.com") payload.empresa = true;
+          localStorage.setItem("manito_user", JSON.stringify(payload));
+        } catch (_) {}
       }
       if (matched.email === "b@b.com") {
         try {
@@ -37,7 +42,26 @@ export default function Page() {
         }
         return;
       }
-      setLoggedIn(true);
+
+      // redirect to role-specific dashboard after login
+      try {
+        if (matched.email === "a@a.com") {
+          await router.replace("/DashboardEmpleado");
+        } else if (matched.email === "c@c.com") {
+          await router.replace("/DashboardEmpresa");
+        } else {
+          setLoggedIn(true);
+        }
+      } catch (_) {
+        if (matched.email === "a@a.com") {
+          if (typeof window !== "undefined") window.location.href = "/DashboardEmpleado";
+        } else if (matched.email === "c@c.com") {
+          if (typeof window !== "undefined") window.location.href = "/DashboardEmpresa";
+        } else {
+          setLoggedIn(true);
+        }
+      }
+
       return;
     }
 
@@ -103,7 +127,7 @@ export default function Page() {
                     type={showPass ? "text" : "password"}
                     value={pass}
                     onChange={(e) => setPass(e.target.value)}
-                    placeholder="••••••••"
+                    placeholder="���•••••••"
                     className="input-field w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 pr-10 outline-none focus:border-emerald-400 focus:bg-white"
                   />
                   <button

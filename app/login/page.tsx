@@ -22,12 +22,17 @@ export default function LoginPage() {
     setSubmitted(true);
     if (!canSubmit) return;
 
-    const TEST_USERS = [{ email: "a@a.com", pass: "123456" }, { email: "b@b.com", pass: "123456" }];
+    const TEST_USERS = [{ email: "a@a.com", pass: "123456" }, { email: "b@b.com", pass: "123456" }, { email: "c@c.com", pass: "123456" }, { email: "d@d.com", pass: "123456" }];
 
     const matched = TEST_USERS.find((u) => u.email === email && u.pass === pass);
     if (matched) {
       if (remember && typeof window !== "undefined") {
-        try { localStorage.setItem("manito_user", JSON.stringify({ email })); } catch (_) {}
+        try {
+          const payload: any = { email: matched.email };
+          if (matched.email === "a@a.com") payload.empleado = true;
+          if (matched.email === "c@c.com") payload.empresa = true;
+          localStorage.setItem("manito_user", JSON.stringify(payload));
+        } catch (_) {}
       }
       if (matched.email === "b@b.com") {
         try {
@@ -37,7 +42,27 @@ export default function LoginPage() {
         }
         return;
       }
-      setLoggedIn(true);
+
+      // redirect to role-specific dashboard after login
+      try {
+        if (matched.email === "a@a.com") {
+          await router.replace("/DashboardEmpleado");
+        } else if (matched.email === "c@c.com") {
+          await router.replace("/DashboardEmpresa");
+        } else {
+          // default: show demo shell
+          setLoggedIn(true);
+        }
+      } catch (_) {
+        if (matched.email === "a@a.com") {
+          if (typeof window !== "undefined") window.location.href = "/DashboardEmpleado";
+        } else if (matched.email === "c@c.com") {
+          if (typeof window !== "undefined") window.location.href = "/DashboardEmpresa";
+        } else {
+          setLoggedIn(true);
+        }
+      }
+
       return;
     }
 

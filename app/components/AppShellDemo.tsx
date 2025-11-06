@@ -40,18 +40,68 @@ function Header({ open, onToggleSidebar }: { open: boolean; onToggleSidebar: () 
 }
 
 function Sidebar({ open, onClose, navigate, onLogout }: { open: boolean; onClose: () => void; navigate: (p: string) => void; onLogout: () => void }) {
-  const items = [
+  const [isEmpleado, setIsEmpleado] = useState(false);
+  const [isEmpresa, setIsEmpresa] = useState(false);
+
+  useEffect(() => {
+    try {
+      if (typeof window === 'undefined') return;
+      const raw = localStorage.getItem('manito_user');
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      setIsEmpleado(Boolean(parsed && parsed.empleado === true));
+      setIsEmpresa(Boolean(parsed && parsed.empresa === true));
+    } catch (_) {
+      // ignore
+    }
+  }, []);
+
+  const allItems = [
     { label: "Dashboard empleado", key: "emp.dashboard" },
     { label: "Datos personales (E)", key: "emp.datosE" },
     { label: "Documentacion (E)", key: "emp.docsE" },
     { label: "Postular Aviso (E)", key: "emp.postularE" },
+    { label: "Reclamos (E)", key: "emp.reclamosE" },
     { label: "Dashboard Empresa", key: "empr.dashboard" },
     { label: "Datos personales (EM)", key: "empr.datosEM" },
     { label: "Documentacion (EM)", key: "empr.docsEM" },
     { label: "Solicitud Empleado (EM)", key: "empr.solicitudEM" },
+    { label: "Seleccion de Colaboladores (EM)", key: "empr.seleccionEM" },
     { label: "Datos Pago (EM)", key: "empr.pagosEM" },
+    { label: "Reclamos (EM)", key: "empr.reclamosEM" },
     { label: "Cerrar Sesion", key: "common.logout" },
   ];
+
+  const hiddenKeysForEmpleado = new Set([
+    'empr.dashboard',
+    'empr.datosEM',
+    'empr.docsEM',
+    'empr.solicitudEM',
+    'empr.pagosEM',
+    'empr.reclamosEM',
+  ]);
+
+  const hiddenKeysForEmpresa = new Set([
+    'emp.dashboard',
+    'emp.datosE',
+    'emp.docsE',
+    'emp.postularE',
+    'emp.reclamosE',
+  ]);
+
+  const hiddenKeys = new Set();
+  if (isEmpleado) {
+    for (const k of hiddenKeysForEmpleado) hiddenKeys.add(k);
+  }
+  if (isEmpresa) {
+    for (const k of hiddenKeysForEmpresa) hiddenKeys.add(k);
+  }
+
+  // seleccionEM should only be visible for empresa users
+  if (!isEmpresa) hiddenKeys.add('empr.seleccionEM');
+
+  const items = allItems.filter((it) => !hiddenKeys.has(it.key));
+
 
   return (
     <>
@@ -85,6 +135,8 @@ function Sidebar({ open, onClose, navigate, onLogout }: { open: boolean; onClose
                   navigate('/DocumentacionEmpleado');
                 } else if (item.key === 'emp.postularE') {
                   navigate('/PostularAvisoEmpleado');
+                } else if (item.key === 'emp.reclamosE') {
+                  navigate('/ReclamosEmpleado');
                 } else if (item.key === 'empr.dashboard') {
                   navigate('/DashboardEmpresa');
                 } else if (item.key === 'empr.datosEM') {
@@ -93,8 +145,12 @@ function Sidebar({ open, onClose, navigate, onLogout }: { open: boolean; onClose
                   navigate('/DocumentacionEmpresa');
                 } else if (item.key === 'empr.solicitudEM') {
                   navigate('/AgregarAvisoEmpresa');
+                } else if (item.key === 'empr.seleccionEM') {
+                  navigate('/ElegirColaboradorEmpresa');
                 } else if (item.key === 'empr.pagosEM') {
                   navigate('/PagosEmpresa');
+                } else if (item.key === 'empr.reclamosEM') {
+                  navigate('/ReclamosEmpresa');
                 } else if (item.key === 'common.logout') {
                   onClose();
                   onLogout();
@@ -131,6 +187,21 @@ export function AppShell({ children }: PropsWithChildren) {
   const pathname = usePathname() || '/';
 
   useEffect(() => {
+    // attach a global handler to suppress unhandled promise rejections that are AbortError from Next navigation
+    const onUnhandled = (e:any) => {
+      try {
+        const reason = e?.reason || e?.detail || null;
+        if (!reason) return;
+        if (reason && (reason.name === 'AbortError' || (reason.message && String(reason.message).toLowerCase().includes('aborted')))) {
+          // prevent default logging of this unhelpful rejected navigation promise
+          if (e && typeof e.preventDefault === 'function') e.preventDefault();
+        }
+      } catch (_) {}
+    };
+    if (typeof window !== 'undefined') {
+      window.addEventListener('unhandledrejection', onUnhandled as EventListener);
+    }
+
     try {
       const headerEl = document.querySelector('[data-testid="app-header"]') as HTMLElement | null;
       console.assert(headerEl, "TC1: header renderizado");
@@ -171,17 +242,19 @@ export function AppShell({ children }: PropsWithChildren) {
       if (nav) {
         console.assert(!nav.className.includes('\\'), 'TC17: nav sin backslashes');
         const buttons = Array.from(nav.querySelectorAll('button')) as HTMLButtonElement[];
-        console.assert(buttons.length === 10, `TC18: hay 10 items en sidebar, actual=${buttons.length}`);
+        console.assert(buttons.length === 12, `TC18: hay 12 items en sidebar, actual=${buttons.length}`);
         const expectedOrder = [
           'Dashboard empleado',
           'Datos personales (E)',
           'Documentacion (E)',
           'Postular Aviso (E)',
+          'Reclamos (E)',
           'Dashboard Empresa',
           'Datos personales (EM)',
           'Documentacion (EM)',
           'Solicitud Empleado (EM)',
           'Datos Pago (EM)',
+          'Reclamos (EM)',
           'Cerrar Sesion'
         ];
         const texts = buttons.map(b => b.textContent?.trim() || '');
@@ -206,9 +279,12 @@ export function AppShell({ children }: PropsWithChildren) {
     }
 
     // keep effect for tests only; pathname is provided by next/navigation
+    return () => {
+      if (typeof window !== 'undefined') window.removeEventListener('unhandledrejection', onUnhandled as EventListener);
+    };
   }, []);
 
-  const navigate = useCallback((p: string) => {
+    const navigate = useCallback((p: string) => {
     try {
       const nav = router.push(p);
       if (nav && typeof (nav as Promise<any>).catch === 'function') {
@@ -231,8 +307,15 @@ export function AppShell({ children }: PropsWithChildren) {
         sessionStorage.removeItem('manito_session');
       } catch (_) {}
     }
+    // router.replace returns a promise; attach catch to avoid unhandled rejections
     try {
-      router.replace('/login');
+      const p = router.replace('/login');
+      if (p && typeof (p as Promise<any>).catch === 'function') {
+        (p as Promise<any>).catch((err: any) => {
+          if (err && (err.name === 'AbortError' || (err.message && err.message.toLowerCase().includes('aborted')))) return;
+          if (typeof window !== 'undefined') window.location.href = '/login';
+        });
+      }
     } catch (err) {
       if (typeof window !== 'undefined') window.location.href = '/login';
     }
@@ -319,6 +402,15 @@ export function AppShell({ children }: PropsWithChildren) {
                     return <Comp />;
                   } catch (e) {
                     return <div>PagosEmpresa (componente no disponible)</div>;
+                  }
+                })()
+              ) : pathname === '/ElegirColaboradorEmpresa' ? (
+                (() => {
+                  try {
+                    const Comp = require('../components/SeleccionColaboradoresSoloRol').default;
+                    return <Comp />;
+                  } catch (e) {
+                    return <div>ElegirColaboradorEmpresa (componente no disponible)</div>;
                   }
                 })()
               ) : (

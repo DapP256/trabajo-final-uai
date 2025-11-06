@@ -200,8 +200,15 @@ export default function AdminBackoffice() {
     } catch (error) {
       console.error(error);
     }
+    // router.replace returns a promise; attach catch to avoid unhandled rejections
     try {
-      router.replace("/login");
+      const p = router.replace("/login");
+      if (p && typeof (p as Promise<any>).catch === 'function') {
+        (p as Promise<any>).catch((err: any) => {
+          if (err && (err.name === 'AbortError' || (err.message && err.message.toLowerCase().includes('aborted')))) return;
+          if (typeof window !== "undefined") window.location.href = "/login";
+        });
+      }
     } catch (error) {
       if (typeof window !== "undefined") window.location.href = "/login";
     }

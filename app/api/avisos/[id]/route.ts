@@ -1,8 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseServiceClient } from '@/lib/supabase/server';
+import { requireSession } from '@/lib/auth/session';
+import { canManageAviso, canViewAviso, isAdmin } from '@/lib/auth/permissions';
 
-export async function GET(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   const supabase = getSupabaseServiceClient();
+  const session = requireSession(request);
+
+  if (!session) {
+    return NextResponse.json({ message: 'No autenticado' }, { status: 401 });
+  }
+
   const { id } = params;
 
   const { data, error } = await supabase
@@ -19,12 +27,40 @@ export async function GET(_request: NextRequest, { params }: { params: { id: str
     return NextResponse.json({ message: 'Aviso no encontrado' }, { status: 404 });
   }
 
+  if (!canViewAviso(session, data)) {
+    return NextResponse.json({ message: 'Acceso denegado' }, { status: 403 });
+  }
+
   return NextResponse.json({ aviso: data });
 }
 
 export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
   const supabase = getSupabaseServiceClient();
+  const session = requireSession(request);
+
+  if (!session) {
+    return NextResponse.json({ message: 'No autenticado' }, { status: 401 });
+  }
+
   const { id } = params;
+
+  const { data: existing, error: fetchError } = await supabase
+    .from('aviso')
+    .select('*')
+    .eq('id', id)
+    .maybeSingle();
+
+  if (fetchError) {
+    return NextResponse.json({ message: 'Error obteniendo aviso', details: fetchError.message }, { status: 500 });
+  }
+
+  if (!existing) {
+    return NextResponse.json({ message: 'Aviso no encontrado' }, { status: 404 });
+  }
+
+  if (!canManageAviso(session, existing)) {
+    return NextResponse.json({ message: 'Acceso denegado' }, { status: 403 });
+  }
 
   let payload: Record<string, unknown>;
   try {
@@ -52,6 +88,9 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
   const updatePayload: Record<string, unknown> = {};
   for (const field of allowedFields) {
     if (field in payload) {
+      if (field === 'estado' && !isAdmin(session)) {
+        continue;
+      }
       updatePayload[field] = payload[field as keyof typeof payload];
     }
   }
@@ -74,9 +113,33 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
   return NextResponse.json({ aviso: data });
 }
 
-export async function DELETE(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   const supabase = getSupabaseServiceClient();
+  const session = requireSession(request);
+
+  if (!session) {
+    return NextResponse.json({ message: 'No autenticado' }, { status: 401 });
+  }
+
   const { id } = params;
+
+  const { data: existing, error: fetchError } = await supabase
+    .from('aviso')
+    .select('*')
+    .eq('id', id)
+    .maybeSingle();
+
+  if (fetchError) {
+    return NextResponse.json({ message: 'Error obteniendo aviso', details: fetchError.message }, { status: 500 });
+  }
+
+  if (!existing) {
+    return NextResponse.json({ message: 'Aviso no encontrado' }, { status: 404 });
+  }
+
+  if (!canManageAviso(session, existing)) {
+    return NextResponse.json({ message: 'Acceso denegado' }, { status: 403 });
+  }
 
   const { error } = await supabase
     .from('aviso')

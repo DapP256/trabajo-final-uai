@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { registerUser } from "@/lib/auth/client";
 
 /**
  * Pantalla: Registro de usuario (Manito)
@@ -10,7 +12,7 @@ import React, { useMemo, useState } from "react";
  * ✔️ Form con validaciones básicas (requeridos, contraseñas iguales, términos)
  * ✔️ Medidor simple de fuerza de contraseña
  * ✔️ UI inspirada en la captura: layout dos columnas, tarjeta a la derecha
- * ✔️ Botón deshabilitado hasta cumplir validaciones
+ * ✔️ Bot��n deshabilitado hasta cumplir validaciones
  */
 
 // ==== Utilidades testeables ====
@@ -32,6 +34,7 @@ export function isEmailValid(email: string): boolean {
 }
 
 export default function RegistroManito() {
+  const router = useRouter();
   const [role, setRole] = useState<"empresa" | "trabajador">("trabajador");
   const [form, setForm] = useState({
     nombre: "",
@@ -46,6 +49,8 @@ export default function RegistroManito() {
   const [showPass, setShowPass] = useState(false);
   const [showPass2, setShowPass2] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const passStrength = useMemo(() => calcPassStrength(form.pass), [form.pass]);
   const passwordsMatch = form.pass && form.pass === form.pass2;
@@ -64,30 +69,32 @@ export default function RegistroManito() {
     setForm((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
   };
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
     if (!isValid) return;
 
-    // Construimos el payload con claves distintas según el rol
-    const payload: Record<string, unknown> = {
-      role,
-      email: form.email,
-      telefono: form.telefono || null,
-      cp: form.cp || null,
-      ciudad: form.ciudad || null,
-      password: form.pass,
-      tyc: form.tyc,
-      ...(role === "empresa"
-        ? { razon_social: form.nombre }
-        : { nombre_apellido: form.nombre }),
-    };
-
-    // Aquí iría el submit real (API / fetch)
-    alert(
-      `Payload de registro:
-${JSON.stringify(payload, null, 2)}`
-    );
+    try {
+      setLoading(true);
+      setError(null);
+      const { redirect } = await registerUser({
+        email: form.email,
+        password: form.pass,
+        nombre: form.nombre.trim(),
+        rol: role,
+        aceptoTerminos: form.tyc,
+        remember: true,
+        telefono: form.telefono || null,
+        cp: form.cp || null,
+        ciudad: form.ciudad || null,
+      });
+      await router.replace(redirect);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'No se pudo completar el registro';
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -170,7 +177,7 @@ ${JSON.stringify(payload, null, 2)}`
 
               {/* Email */}
               <div>
-                <label className="mb-1 block text-sm text-slate-600">Correo electrónico</label>
+                <label className="mb-1 block text-sm text-slate-600">Correo electr��nico</label>
                 <input
                   name="email"
                   type="email"
@@ -302,12 +309,18 @@ ${JSON.stringify(payload, null, 2)}`
               </label>
 
               {/* Submit */}
+              {error && (
+                <div className="rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">
+                  {error}
+                </div>
+              )}
+
               <button
                 type="submit"
-                disabled={!isValid}
+                disabled={!isValid || loading}
                 className="w-full rounded-full bg-emerald-600 px-4 py-2.5 font-medium text-white shadow-sm transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                Crear cuenta
+                {loading ? "Registrando..." : "Crear cuenta"}
               </button>
 
               <p className="text-center text-xs text-slate-500">

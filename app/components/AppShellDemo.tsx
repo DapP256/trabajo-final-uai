@@ -229,8 +229,6 @@ export function AppShell({ children }: PropsWithChildren) {
         }
       } catch (_) {
         if (active) setSessionUser(null);
-      } finally {
-        // no-op
       }
     };
     loadSession();

@@ -39,14 +39,6 @@ export async function POST(request: NextRequest) {
   let nombre = nombreOriginal || null;
   let apellido = apellidoInput;
 
-  if (!apellido && nombre) {
-    const parts = nombre.split(' ');
-    if (parts.length > 1) {
-      nombre = parts.shift() ?? nombre;
-      apellido = parts.join(' ') || null;
-    }
-  }
-
   if (!email) {
     return NextResponse.json({ message: 'Email requerido' }, { status: 400 });
   }
@@ -55,6 +47,17 @@ export async function POST(request: NextRequest) {
   }
   if (!nombre) {
     return NextResponse.json({ message: 'Nombre requerido' }, { status: 400 });
+  }
+  if (!aceptoTerminos) {
+    return NextResponse.json({ message: 'Debés aceptar los términos y condiciones' }, { status: 400 });
+  }
+
+  if (rol !== 'empresa' && !apellido && nombre) {
+    const parts = nombre.split(' ');
+    if (parts.length > 1) {
+      nombre = parts.shift() ?? nombre;
+      apellido = parts.join(' ') || null;
+    }
   }
 
   const { data: existingUser, error: fetchError } = await supabase

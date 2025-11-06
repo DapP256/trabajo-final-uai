@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { compare } from 'bcryptjs';
-import { randomUUID } from 'crypto';
+import { compare, hash } from 'bcryptjs';
+import { randomUUID, timingSafeEqual } from 'crypto';
 import { getSupabaseServiceClient } from '@/lib/supabase/server';
 import { setSessionCookie } from '@/lib/auth/session';
 
@@ -35,9 +35,36 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message: 'Credenciales inválidas' }, { status: 401 });
   }
 
-  const passwordOk = await compare(password, data.contrasena_hash);
+  const storedHash = data.contrasena_hash ?? '';
+  const isBcryptHash = typeof storedHash === 'string' && /^\$2[aby]\$/i.test(storedHash.slice(0, 4));
+
+  let passwordOk = false;
+  let shouldRehash = false;
+
+  if (isBcryptHash) {
+    passwordOk = await compare(password, storedHash);
+  } else if (storedHash) {
+    if (storedHash.length === password.length) {
+      try {
+        passwordOk = timingSafeEqual(Buffer.from(password), Buffer.from(storedHash));
+      } catch (_) {
+        passwordOk = false;
+      }
+    }
+    shouldRehash = passwordOk;
+  }
+
   if (!passwordOk) {
     return NextResponse.json({ message: 'Credenciales inválidas' }, { status: 401 });
+  }
+
+  if (shouldRehash) {
+    try {
+      const newHash = await hash(password, 10);
+      await supabase.from('usuario').update({ contrasena_hash: newHash }).eq('id', data.id);
+    } catch (_) {
+      // Si falla la actualización, continuamos con el login igualmente
+    }
   }
 
   const sessionToken = randomUUID();

@@ -16,8 +16,6 @@ export default function SeleccionColaboradoresSoloRol() {
   // ====== Estado UI ======
   const [rows, setRows] = useState(base);
   const [fRol, setFRol] = useState('');
-  const [checked, setChecked] = useState<any>({});
-  const [selectAll, setSelectAll] = useState(false);
   const [detailId, setDetailId] = useState<any>(null);
   const [confirm, setConfirm] = useState<any>(null); // {action, ids}
   const [toast, setToast] = useState<any>(null);
@@ -34,17 +32,6 @@ export default function SeleccionColaboradoresSoloRol() {
     })
     .sort((a:any,b:any)=> b.match - a.match); // fijo por match desc
 
-  const checkedIds = Object.keys(checked).filter(k => checked[k]);
-
-  // ====== Helpers ======
-  const toggleAll = () => {
-    const value = !selectAll;
-    setSelectAll(value);
-    const next:any = {};
-    filtered.forEach((r:any) => next[r.id] = value);
-    setChecked(next);
-  };
-  const toggleOne = (id:string) => setChecked((prev:any) => ({...prev, [id]: !prev[id]}));
   const fmt = (n:any) => (Number(n) || 0).toLocaleString('es-AR');
   const showToast = (title:string, description?:string) => { setToast({ title, description }); setTimeout(()=>setToast(null), 2800); };
 
@@ -62,7 +49,6 @@ export default function SeleccionColaboradoresSoloRol() {
       if (action === 'reject') return { ...r, estado: 'Rechazado' };
       return r;
     }));
-    setChecked({}); setSelectAll(false);
     showToast('Acción aplicada', `${ids.length} colaborador(es): ${labelAction(confirm.action)}`);
     setConfirm(null);
   };
@@ -82,21 +68,16 @@ export default function SeleccionColaboradoresSoloRol() {
           />
         </div>
 
-        {/* Acciones masivas */}
-        <div className="mt-3 flex flex-wrap gap-2">
-          <button onClick={()=>doAction('choose', checkedIds)} className="rounded-xl border px-3 py-2 text-sm bg-white">Elegir</button>
-          <button onClick={()=>doAction('reject', checkedIds)} className="rounded-xl border px-3 py-2 text-sm bg-white">Rechazar</button>
-          <span className="text-xs text-neutral-500 ml-auto">Seleccionados: {fmt(checkedIds.length)}</span>
-        </div>
+        {/* Acciones masivas removed - only per-item actions remain */}
+        <div className="mt-3" />
       </div>
 
       {/* Listado */}
       <div className="mx-auto max-w-7xl px-4 pb-10">
         <section className="bg-white rounded-2xl border overflow-hidden">
           <div className="hidden md:grid grid-cols-12 px-4 py-2 text-xs text-neutral-500">
-            <div className="col-span-1"><input type="checkbox" checked={selectAll} onChange={toggleAll} /></div>
-            <div className="col-span-3">Colaborador</div>
-            <div className="col-span-2">Rol · Sede</div>
+            <div className="col-span-4">Colaborador</div>
+            <div className="col-span-3">Rol · Sede</div>
             <div className="col-span-1 text-right">Match</div>
             <div className="col-span-1 text-right">Rating</div>
             <div className="col-span-2">Docs</div>
@@ -105,18 +86,17 @@ export default function SeleccionColaboradoresSoloRol() {
           <ul className="divide-y">
             {filtered.map((r:any) => (
               <li key={r.id} className="grid grid-cols-12 gap-2 px-4 py-3 items-center">
-                <div className="col-span-2 md:col-span-1"><input type="checkbox" checked={!!checked[r.id]} onChange={()=>toggleOne(r.id)} /></div>
-                <div className="col-span-10 md:col-span-3">
+                <div className="col-span-12 md:col-span-4">
                   <div className="font-medium text-neutral-900">{r.nombre}</div>
                   <div className="text-[11px] text-neutral-500">ID {r.id}</div>
                 </div>
-                <div className="col-span-6 md:col-span-2 text-sm text-neutral-800">{r.rol} · {r.empresa}</div>
+                <div className="col-span-6 md:col-span-3 text-sm text-neutral-800">{r.rol} · {r.empresa}</div>
                 <div className="col-span-3 md:col-span-1 text-sm text-right font-medium">{r.match}%</div>
                 <div className="col-span-3 md:col-span-1 text-sm text-right">{r.rating.toFixed(1)}</div>
                 <div className="col-span-6 md:col-span-2 text-sm">
                   <DocsChip v={r.docs} /> · <span className="text-neutral-500">{r.disponibilidad}</span>
                 </div>
-                <div className="col-span-9 md:col-span-1 text-right">
+                <div className="col-span-12 md:col-span-1 text-right">
                   <EstadoChip estado={r.estado} />
                 </div>
                 <div className="col-span-12 md:col-span-12 flex justify-end gap-2 mt-2">

@@ -27,10 +27,25 @@ export async function POST(request: NextRequest) {
 
   const email = payload.email?.trim().toLowerCase();
   const password = payload.password?.trim();
-  const nombre = payload.nombre?.trim();
-  const apellido = payload.apellido?.trim() || null;
-  const rol = payload.rol ?? 'trabajador';
-  const aceptoTerminos = Boolean(payload.aceptoTerminos);
+  const nombreOriginal = payload.nombre?.trim();
+  const apellidoInput = payload.apellido?.trim() || null;
+  const rawRol = payload.rol ?? 'trabajador';
+  const rol: 'trabajador' | 'empresa' | 'administrador' = rawRol === 'empresa' ? 'empresa' : rawRol === 'administrador' ? 'administrador' : 'trabajador';
+  const aceptoTerminos = payload.aceptoTerminos === true;
+  const telefono = typeof payload.telefono === 'string' && payload.telefono.trim() ? payload.telefono.trim() : null;
+  const cp = typeof payload.cp === 'string' && payload.cp.trim() ? payload.cp.trim() : null;
+  const ciudad = typeof payload.ciudad === 'string' && payload.ciudad.trim() ? payload.ciudad.trim() : null;
+
+  let nombre = nombreOriginal || null;
+  let apellido = apellidoInput;
+
+  if (!apellido && nombre) {
+    const parts = nombre.split(' ');
+    if (parts.length > 1) {
+      nombre = parts.shift() ?? nombre;
+      apellido = parts.join(' ') || null;
+    }
+  }
 
   if (!email) {
     return NextResponse.json({ message: 'Email requerido' }, { status: 400 });

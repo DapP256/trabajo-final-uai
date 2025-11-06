@@ -5,6 +5,8 @@ import { usePathname, useRouter } from "next/navigation";
 import type { SessionPayload } from "@/lib/auth/session";
 import { MANITO_USER_STORAGE_KEY } from "@/lib/auth/constants";
 
+type SessionUser = SessionPayload['user'];
+
 function Header({ open, onToggleSidebar }: { open: boolean; onToggleSidebar: () => void }) {
   return (
     <header data-testid="app-header" className="fixed inset-x-0 top-0 z-50 relative flex h-14 items-center border-b border-slate-200 bg-white/90 backdrop-blur">
@@ -209,8 +211,34 @@ function Footer() {
 
 export function AppShell({ children }: PropsWithChildren) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sessionUser, setSessionUser] = useState<SessionUser | null>(null);
+  const [sessionLoaded, setSessionLoaded] = useState(false);
   const router = useRouter();
   const pathname = usePathname() || '/';
+
+  useEffect(() => {
+    let active = true;
+    const loadSession = async () => {
+      try {
+        const res = await fetch('/api/auth/me', { credentials: 'include' });
+        if (!active) return;
+        if (!res.ok) {
+          setSessionUser(null);
+        } else {
+          const body = await res.json();
+          setSessionUser(body?.user ?? null);
+        }
+      } catch (_) {
+        if (active) setSessionUser(null);
+      } finally {
+        if (active) setSessionLoaded(true);
+      }
+    };
+    loadSession();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     // attach a global handler to suppress unhandled promise rejections that are AbortError from Next navigation
@@ -286,7 +314,7 @@ export function AppShell({ children }: PropsWithChildren) {
         const texts = buttons.map(b => b.textContent?.trim() || '');
         console.assert(
           expectedOrder.every((t, i) => texts[i] === t),
-          `TC19: order de ítems correcto? esperado=${expectedOrder.join(' | ')} actual=${texts.join(' | ')}`
+          `TC19: order de ��tems correcto? esperado=${expectedOrder.join(' | ')} actual=${texts.join(' | ')}`
         );
       }
 

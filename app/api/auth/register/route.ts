@@ -14,6 +14,9 @@ export async function POST(request: NextRequest) {
     apellido?: string;
     rol?: 'trabajador' | 'empresa' | 'administrador';
     aceptoTerminos?: boolean;
+    telefono?: string;
+    cp?: string;
+    ciudad?: string;
   };
 
   try {

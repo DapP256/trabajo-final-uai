@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { randomUUID } from 'crypto';
+import { NextRequest, NextResponse } from 'next/server';
 import { hash } from 'bcryptjs';
 import { getSupabaseServiceClient } from '@/lib/supabase/server';
 import { setSessionCookie } from '@/lib/auth/session';

@@ -72,7 +72,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message: 'Error creando usuario', details: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({
+  const issuedAt = new Date().toISOString();
+  const token = randomUUID();
+
+  const response = NextResponse.json({
     user: {
       id: data.id,
       email: data.email,
@@ -82,5 +85,24 @@ export async function POST(request: NextRequest) {
       estado: data.estado,
       created_at: data.created_at,
     },
+    session: {
+      token,
+      issued_at: issuedAt,
+    },
   });
+
+  setSessionCookie(response, {
+    token,
+    user: {
+      id: data.id,
+      email: data.email,
+      nombre: data.nombre,
+      apellido: data.apellido,
+      rol: data.rol,
+      estado: data.estado,
+    },
+    issuedAt,
+  });
+
+  return response;
 }

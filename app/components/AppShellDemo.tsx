@@ -212,7 +212,6 @@ function Footer() {
 export function AppShell({ children }: PropsWithChildren) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sessionUser, setSessionUser] = useState<SessionUser | null>(null);
-  const [sessionLoaded, setSessionLoaded] = useState(false);
   const router = useRouter();
   const pathname = usePathname() || '/';
 

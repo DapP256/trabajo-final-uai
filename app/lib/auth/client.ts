@@ -97,7 +97,12 @@ export async function loginUser(params: LoginParams): Promise<{ user: AuthUser; 
   });
 
   const body = await handleResponse(response);
-  const user = body?.user as AuthUser;
+  const user = (body && typeof body === 'object' && body !== null && 'user' in body ? (body as any).user : null) as
+    | AuthUser
+    | null;
+  if (!user) {
+    throw new Error('Respuesta inválida del servidor');
+  }
   const remember = params.remember ?? false;
   storeUserLocally(user, remember);
 
@@ -126,7 +131,12 @@ export async function registerUser(params: RegisterParams): Promise<{ user: Auth
   });
 
   const body = await handleResponse(response);
-  const user = body?.user as AuthUser;
+  const user = (body && typeof body === 'object' && body !== null && 'user' in body ? (body as any).user : null) as
+    | AuthUser
+    | null;
+  if (!user) {
+    throw new Error('Respuesta inválida del servidor');
+  }
   const remember = params.remember ?? true;
   storeUserLocally(user, remember);
 

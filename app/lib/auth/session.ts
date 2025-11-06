@@ -1,4 +1,4 @@
-import { createHmac } from 'crypto';
+import { createHmac, timingSafeEqual as nodeTimingSafeEqual } from 'crypto';
 import type { NextRequest, NextResponse } from 'next/server';
 import { requireSessionSecret } from '@/lib/env';
 

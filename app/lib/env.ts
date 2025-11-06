@@ -2,6 +2,7 @@ type EnvShape = {
   NEXT_PUBLIC_SUPABASE_URL: string;
   NEXT_PUBLIC_SUPABASE_ANON_KEY: string;
   SUPABASE_SERVICE_ROLE_KEY?: string;
+  SESSION_SECRET: string;
 };
 
 let cachedEnv: EnvShape | null = null;

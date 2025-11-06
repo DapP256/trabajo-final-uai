@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { compare } from 'bcryptjs';
 import { randomUUID } from 'crypto';
 import { getSupabaseServiceClient } from '@/lib/supabase/server';
+import { setSessionCookie } from '@/lib/auth/session';
 
 export async function POST(request: NextRequest) {
   const supabase = getSupabaseServiceClient();

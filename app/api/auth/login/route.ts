@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { NextRequest, NextResponse } from 'next/server';
 import { compare } from 'bcryptjs';
 import { randomUUID } from 'crypto';
 import { getSupabaseServiceClient } from '@/lib/supabase/server';

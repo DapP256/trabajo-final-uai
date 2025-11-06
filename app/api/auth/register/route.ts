@@ -85,6 +85,10 @@ export async function POST(request: NextRequest) {
       apellido,
       rol,
       acepto_terminos: aceptoTerminos,
+      telefono,
+      cp,
+      ciudad,
+      contacto_nombre: rol === 'empresa' ? nombreOriginal : null,
     })
     .select('id, email, nombre, apellido, rol, estado, created_at')
     .single();

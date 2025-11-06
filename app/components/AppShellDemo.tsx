@@ -358,7 +358,13 @@ export function AppShell({ children }: PropsWithChildren) {
   return (
     <>
       <div className="flex min-h-screen w-full bg-slate-50">
-        <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} navigate={navigate} onLogout={logout} />
+        <Sidebar
+          open={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+          navigate={navigate}
+          onLogout={logout}
+          sessionUser={sessionUser}
+        />
 
         <div data-testid="right-col" className={`pt-14 flex min-h-screen flex-1 flex-col ${sidebarOpen ? "lg:ml-72" : "lg:ml-0"}`}>
           <Header open={sidebarOpen} onToggleSidebar={() => setSidebarOpen((v) => !v)} />

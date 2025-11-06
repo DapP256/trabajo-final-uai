@@ -62,12 +62,29 @@ function determineRedirect(user: AuthUser): string {
 }
 
 async function handleResponse(response: Response) {
-  const contentType = response.headers.get('content-type');
-  const body = contentType && contentType.includes('application/json') ? await response.json() : null;
+  const contentType = response.headers.get('content-type') ?? '';
+  let body: unknown = null;
+
+  if (contentType.includes('application/json') && !response.bodyUsed) {
+    try {
+      body = await response.clone().json();
+    } catch (_) {
+      try {
+        body = await response.json();
+      } catch (_) {
+        body = null;
+      }
+    }
+  }
+
   if (!response.ok) {
-    const message = body?.message || 'Ocurrió un error inesperado';
+    const message =
+      (body && typeof body === 'object' && body !== null && 'message' in body && typeof (body as any).message === 'string'
+        ? (body as any).message
+        : null) || 'Ocurrió un error inesperado';
     throw new Error(message);
   }
+
   return body;
 }
 

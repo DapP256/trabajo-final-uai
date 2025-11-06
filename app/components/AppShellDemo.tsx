@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect, PropsWithChildren, useCallback } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import type { SessionPayload } from "@/lib/auth/session";
+import { MANITO_USER_STORAGE_KEY } from "@/lib/auth/constants";
 
 function Header({ open, onToggleSidebar }: { open: boolean; onToggleSidebar: () => void }) {
   return (
@@ -39,22 +41,47 @@ function Header({ open, onToggleSidebar }: { open: boolean; onToggleSidebar: () 
   );
 }
 
-function Sidebar({ open, onClose, navigate, onLogout }: { open: boolean; onClose: () => void; navigate: (p: string) => void; onLogout: () => void }) {
-  const [isEmpleado, setIsEmpleado] = useState(false);
-  const [isEmpresa, setIsEmpresa] = useState(false);
+type SidebarProps = {
+  open: boolean;
+  onClose: () => void;
+  navigate: (p: string) => void;
+  onLogout: () => void;
+  sessionUser: SessionPayload['user'] | null;
+};
+
+function Sidebar({ open, onClose, navigate, onLogout, sessionUser }: SidebarProps) {
+  const [role, setRole] = useState<SessionPayload['user']['rol'] | null>(sessionUser?.rol ?? null);
 
   useEffect(() => {
+    if (sessionUser?.rol) {
+      setRole(sessionUser.rol);
+      return;
+    }
+
+    if (typeof window === 'undefined') {
+      setRole(null);
+      return;
+    }
+
     try {
-      if (typeof window === 'undefined') return;
-      const raw = localStorage.getItem('manito_user');
-      if (!raw) return;
-      const parsed = JSON.parse(raw);
-      setIsEmpleado(Boolean(parsed && parsed.empleado === true));
-      setIsEmpresa(Boolean(parsed && parsed.empresa === true));
+      const stored = sessionStorage.getItem(MANITO_USER_STORAGE_KEY) || localStorage.getItem(MANITO_USER_STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed?.rol) {
+          setRole(parsed.rol);
+          return;
+        }
+      }
     } catch (_) {
       // ignore
     }
-  }, []);
+
+    setRole(null);
+  }, [sessionUser]);
+
+  const isAdmin = role === 'administrador';
+  const isEmpleado = role === 'trabajador';
+  const isEmpresa = role === 'empresa';
 
   const allItems = [
     { label: "Dashboard empleado", key: "emp.dashboard" },
@@ -89,16 +116,15 @@ function Sidebar({ open, onClose, navigate, onLogout }: { open: boolean; onClose
     'emp.reclamosE',
   ]);
 
-  const hiddenKeys = new Set();
-  if (isEmpleado) {
+  const hiddenKeys = new Set<string>();
+  if (isEmpleado && !isAdmin) {
     for (const k of hiddenKeysForEmpleado) hiddenKeys.add(k);
   }
-  if (isEmpresa) {
+  if (isEmpresa && !isAdmin) {
     for (const k of hiddenKeysForEmpresa) hiddenKeys.add(k);
   }
 
-  // seleccionEM should only be visible for empresa users
-  if (!isEmpresa) hiddenKeys.add('empr.seleccionEM');
+  if (!isEmpresa && !isAdmin) hiddenKeys.add('empr.seleccionEM');
 
   const items = allItems.filter((it) => !hiddenKeys.has(it.key));
 

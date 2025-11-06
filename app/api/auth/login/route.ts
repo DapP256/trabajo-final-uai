@@ -41,13 +41,14 @@ export async function POST(request: NextRequest) {
   }
 
   const sessionToken = randomUUID();
+  const issuedAt = new Date().toISOString();
 
   await supabase
     .from('usuario')
-    .update({ last_login_at: new Date().toISOString() })
+    .update({ last_login_at: issuedAt })
     .eq('id', data.id);
 
-  return NextResponse.json({
+  const response = NextResponse.json({
     user: {
       id: data.id,
       email: data.email,
@@ -58,7 +59,22 @@ export async function POST(request: NextRequest) {
     },
     session: {
       token: sessionToken,
-      issued_at: new Date().toISOString(),
+      issued_at: issuedAt,
     },
   });
+
+  setSessionCookie(response, {
+    token: sessionToken,
+    user: {
+      id: data.id,
+      email: data.email,
+      nombre: data.nombre,
+      apellido: data.apellido,
+      rol: data.rol,
+      estado: data.estado,
+    },
+    issuedAt,
+  });
+
+  return response;
 }
